@@ -1,0 +1,60 @@
+<html>
+  <head>
+    <title>Link Checker Report</title>
+    <style>
+      table { border-collapse: collapse; width: 100%; }
+      th, td { text-align: left; padding: 8px; border: 1px solid black; }
+      th { background-color: #ddd; }
+    </style>
+  </head>
+  <body>
+    <h1>Link Checker Report</h1>
+    <p><a href="{{url}}" target="_blank">Crawled URL: {{url}}</a></p>
+    <p>Crawl Time: {{timestamp}}</p>
+    {{#each statusCodes}}
+      <h2>HTTP {{this}}</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>URL</th>
+            <th>Status Code</th>
+            {{#ifCond this '>= 300' '&&' this '< 400'}}
+              <th>Redirect URL</th>
+            {{/ifCond}}
+            {{#ifCond this '>= 200' '&&' this '< 300'}}
+              <th>Content Type</th>
+              <th>Canonical Header</th>
+              <th>Canonical Static</th>
+              <th>Title Static</th>
+            {{/ifCond}}
+          </tr>
+        </thead>
+        <tbody>
+          {{#each ../ls}}
+            {{#ifCond this.sc '==' ../this}}
+              <tr>
+                <td><a href="{{@key}}" target="_blank">{{@key}}</a></td>
+                <td>{{this.sc}}</td>
+                {{#ifCond ../this '>= 300' '&&' ../this '< 400'}}
+                  <td>
+                    {{#if this.redirUrl}}
+                      <a href="{{this.redirUrl}}" target="_blank">{{this.redirUrl}}</a>
+                    {{else}}
+                      N/A
+                    {{/if}}
+                  </td>
+                {{/ifCond}}
+                {{#ifCond ../this '>= 200' '&&' ../this '< 300'}}
+                  <td>{{this.contentType}}</td>
+                  <td>{{this.canonicalHeader}}</td>
+                  <td>{{this.canonicalStatic}}</td>
+                  <td>{{this.titleStatic}}</td>
+                {{/ifCond}}
+              </tr>
+            {{/ifCond}}
+          {{/each}}
+        </tbody>
+      </table>
+    {{/each}}
+  </body>
+</html>
